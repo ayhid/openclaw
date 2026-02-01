@@ -3,18 +3,8 @@ FROM node:22-bookworm
 # Install socat (useful for port forwarding/debugging)
 RUN apt-get update && apt-get install -y socat && rm -rf /var/lib/apt/lists/*
 
-# Bake required skill binaries into the image (survives container restarts)
-# Gmail CLI
-RUN curl -L https://github.com/steipete/gog/releases/latest/download/gog_Linux_x86_64.tar.gz \
-  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/gog
-
-# Google Places CLI
-RUN curl -L https://github.com/steipete/goplaces/releases/latest/download/goplaces_Linux_x86_64.tar.gz \
-  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/goplaces
-
-# WhatsApp CLI
-RUN curl -L https://github.com/steipete/wacli/releases/latest/download/wacli_Linux_x86_64.tar.gz \
-  | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/wacli
+# Add skill binaries here when needed. Example pattern:
+# RUN curl -L <release-url>.tar.gz | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/<binary>
 
 # Install Bun (required for build scripts)
 RUN curl -fsSL https://bun.sh/install | bash
