@@ -22,6 +22,15 @@ services:
       - /root/.openclaw/workspace:/home/node/.openclaw/workspace
     ports:
       - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
+    networks:
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.openclaw.rule=Host(`openclaw.opkod.dev`)
+      - traefik.http.routers.openclaw.entrypoints=websecure
+      - traefik.http.routers.openclaw.tls.certResolver=letsencrypt
+      - traefik.http.services.openclaw.loadbalancer.server.port=18789
     init: true
     command:
       [
@@ -33,3 +42,7 @@ services:
         "--port",
         "${OPENCLAW_GATEWAY_PORT:-18789}",
       ]
+
+networks:
+  dokploy-network:
+    external: true
