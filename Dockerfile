@@ -37,9 +37,16 @@ RUN pnpm ui:build
 
 ENV NODE_ENV=production
 
+# Copy seed config and entrypoint for Dokploy deployments
+# The entrypoint seeds openclaw.json if the host volume mount is empty
+COPY dokploy/openclaw.seed.json /opt/openclaw-seed/openclaw.seed.json
+COPY dokploy/entrypoint.sh /opt/openclaw-seed/entrypoint.sh
+RUN chmod +x /opt/openclaw-seed/entrypoint.sh
+
 # Security hardening: Run as non-root user
 # The node:22-bookworm image includes a 'node' user (uid 1000)
 # This reduces the attack surface by preventing container escape via root privileges
 USER node
 
+ENTRYPOINT ["/opt/openclaw-seed/entrypoint.sh"]
 CMD ["node", "dist/index.js"]
