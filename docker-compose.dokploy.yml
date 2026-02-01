@@ -15,8 +15,8 @@ services:
       XDG_CONFIG_HOME: /home/node/.openclaw
       PATH: /home/linuxbrew/.linuxbrew/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     volumes:
-      - /root/.openclaw:/home/node/.openclaw
-      - /root/.openclaw/workspace:/home/node/.openclaw/workspace
+      - openclaw-config:/home/node/.openclaw
+      - openclaw-workspace:/home/node/.openclaw/workspace
     ports:
       - "${OPENCLAW_GATEWAY_PORT:-18789}:18789"
     networks:
@@ -39,6 +39,10 @@ services:
         "--port",
         "${OPENCLAW_GATEWAY_PORT:-18789}",
       ]
+
+volumes:
+  openclaw-config:
+  openclaw-workspace:
 
 networks:
   dokploy-network:
