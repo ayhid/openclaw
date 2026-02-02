@@ -1,7 +1,8 @@
 FROM node:22-bookworm
 
-# Install socat (port forwarding) and gosu (lightweight privilege drop)
-RUN apt-get update && apt-get install -y socat gosu && rm -rf /var/lib/apt/lists/*
+# Install socat (port forwarding), gosu (lightweight privilege drop),
+# and gettext-base (envsubst for config template expansion)
+RUN apt-get update && apt-get install -y socat gosu gettext-base && rm -rf /var/lib/apt/lists/*
 
 # Add skill binaries here when needed. Example pattern:
 # RUN curl -L <release-url>.tar.gz | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/<binary>
@@ -38,12 +39,12 @@ RUN pnpm ui:build
 ENV NODE_ENV=production
 
 # Copy seed config and entrypoint for Dokploy deployments
-# The entrypoint seeds openclaw.json if the host volume mount is empty
+# The entrypoint writes openclaw.json (with env var substitution) on every start
 COPY dokploy/openclaw.seed.json /opt/openclaw-seed/openclaw.seed.json
 COPY dokploy/entrypoint.sh /opt/openclaw-seed/entrypoint.sh
 RUN chmod +x /opt/openclaw-seed/entrypoint.sh
 
-# Entrypoint runs as root to seed config + fix permissions,
-# then drops to node (uid 1000) via su-exec before starting the gateway.
+# Entrypoint runs as root to write config (envsubst) + fix permissions,
+# then drops to node (uid 1000) via gosu before starting the gateway.
 ENTRYPOINT ["/opt/openclaw-seed/entrypoint.sh"]
 CMD ["node", "dist/index.js"]
