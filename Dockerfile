@@ -1,8 +1,8 @@
 FROM node:22-bookworm
 
-# Install socat (port forwarding), gosu (lightweight privilege drop),
-# and gettext-base (envsubst for config template expansion)
-RUN apt-get update && apt-get install -y socat gosu gettext-base && rm -rf /var/lib/apt/lists/*
+# Install socat (port forwarding), gosu (privilege drop), gettext-base
+# (envsubst for config templates), iproute2 (ip route for proxy discovery)
+RUN apt-get update && apt-get install -y socat gosu gettext-base iproute2 && rm -rf /var/lib/apt/lists/*
 
 # Add skill binaries here when needed. Example pattern:
 # RUN curl -L <release-url>.tar.gz | tar -xz -C /usr/local/bin && chmod +x /usr/local/bin/<binary>
